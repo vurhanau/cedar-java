@@ -27,11 +27,13 @@ import com.cedarpolicy.model.slice.Entity;
 import com.cedarpolicy.model.slice.Policy;
 import com.cedarpolicy.model.slice.Slice;
 import com.cedarpolicy.serializer.JsonEUID;
+import com.cedarpolicy.serializer.JsonEUIDDeserializer;
 import com.cedarpolicy.value.Value;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -56,7 +58,10 @@ import org.junit.jupiter.api.TestFactory;
 
 /** Integration tests Used by Cedar / corpus tests saved from the fuzzer. */
 public class SharedIntegrationTests {
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().registerModule(
+        new SimpleModule().addDeserializer(JsonEUID.class, new JsonEUIDDeserializer())
+    );
+
     private static final String CEDAR_INTEGRATION_TESTS_ROOT =
             Objects.requireNonNull(
                     System.getenv("CEDAR_INTEGRATION_TESTS_ROOT"),

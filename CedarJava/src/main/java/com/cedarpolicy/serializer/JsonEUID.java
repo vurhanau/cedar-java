@@ -17,12 +17,17 @@
 package com.cedarpolicy.serializer;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /** Represent JSON format of Entity Unique Identifier. */
-@JsonDeserialize
+@JsonDeserialize(using = JsonEUIDDeserializer.class)
 public class JsonEUID {
-    /** euid (__expr is used as escape sequence in JSON). */
+    /** euid (__expr is used as escape sequence in JSON).
+     * or
+     * type::id
+     * */
     @JsonProperty("__expr")
     public final String euid;
 
@@ -34,10 +39,10 @@ public class JsonEUID {
     /**
      * Build JsonEUID.
      *
-     * @param s Entity Unique ID.
+     * @param expr Entity Unique ID.
      */
-    public JsonEUID(String s) {
-        this.euid = s;
+    public JsonEUID(String expr) {
+        this.euid = expr;
     }
 
     /** Build JsonEUID (default constructor needed by Jackson). */

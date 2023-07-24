@@ -91,11 +91,18 @@ public class ValueCedarDeserializer extends JsonDeserializer<Value> {
                 if (count == 1) {
                     if (escapeType == EscapeType.ENTITY) {
                         JsonNode val = node.get(ENTITY_ESCAPE_SEQ);
-                        if (!val.isTextual()) {
-                            throw new InvalidValueDeserializationException(
-                                    "Not textual node: " + node.toString());
+                        if (val.isTextual()) {
+                            return new EntityUID(val.textValue());
                         }
-                        return new EntityUID(val.textValue());
+
+                        if (val.isObject() && JsonEUIDDeserializer.HasTypeAndId(val)) {
+                            String euid = JsonEUIDDeserializer.GetEUID(val);
+                            return new EntityUID(euid);
+                        }
+
+                        throw new InvalidValueDeserializationException(
+                                "Unexpected node type: " + node.toString());
+
                     } else {
                         JsonNode val = node.get(EXTENSION_ESCAPE_SEQ);
                         JsonNode fn = val.get("fn");
