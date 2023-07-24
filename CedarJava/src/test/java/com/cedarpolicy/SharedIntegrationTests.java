@@ -221,13 +221,14 @@ public class SharedIntegrationTests {
                 Files.list(Paths.get(CEDAR_INTEGRATION_TESTS_ROOT, "corpus_tests"))) {
             stream
                     // ignore non-JSON files
-                    .filter(path -> path.endsWith(".json"))
                     // ignore files that start with policies_, entities_, or schema_
-                    .filter(
-                            path ->
-                                    !path.startsWith("policies_")
-                                            && !path.startsWith("entities_")
-                                            && !path.startsWith("schema_"))
+                    .filter(path -> {
+                        String fileName = path.getFileName().toString();
+                        return fileName.endsWith(".json")
+                                && !fileName.startsWith("policies_")
+                                && !fileName.startsWith("entities_")
+                                && !fileName.startsWith("schema_");
+                    })
                     // add the test
                     .forEach(
                             path -> {
